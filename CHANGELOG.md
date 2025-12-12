@@ -1,5 +1,35 @@
 # c2pa-ts
 
+## 0.9.4
+
+### Patch Changes
+
+- 25ec311: github release
+
+## 0.9.3
+
+### Patch Changes
+
+- 239954e: github release
+
+## 0.9.2
+
+### Patch Changes
+
+- d048ed3: github release
+
+## 0.9.1
+
+### Patch Changes
+
+- 29e043d: switch NPM publish to use OIDC
+
+## 0.9.0
+
+### Minor Changes
+
+- 7e4c824: Add MP3 support
+
 ## 0.8.0
 
 ### Minor Changes
