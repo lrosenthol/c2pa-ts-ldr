@@ -1,5 +1,17 @@
 # c2pa-ts
 
+## 0.10.0
+
+### Minor Changes
+
+- 1e8b6e0: Write ECDSA signatures in P1363 format
+
+## 0.9.5
+
+### Patch Changes
+
+- 68b9c64: Fix TypeScript 5.8+ ArrayBuffer/BufferSource compatibility inconsistencies
+
 ## 0.9.4
 
 ### Patch Changes

@@ -1,11 +1,10 @@
 import assert from 'assert';
+import { describe, it } from 'bun:test';
 import * as bin from 'typed-binary';
 import { CodestreamBox } from '../../src/jumbf';
 import { BinaryHelper } from '../../src/util';
 
 describe('CodestreamBox Tests', function () {
-    this.timeout(0);
-
     describe('Empty', function () {
         const serializedString = '000000086a703263';
 
@@ -17,8 +16,8 @@ describe('CodestreamBox Tests', function () {
 
             // write the box to a buffer
             const length = schema.measure(box).size;
-            const buffer = Buffer.alloc(length);
-            const writer = new bin.BufferWriter(buffer, { endianness: 'big' });
+            const buffer = new Uint8Array(length);
+            const writer = new bin.BufferWriter(buffer.buffer, { endianness: 'big' });
             schema.write(writer, box);
 
             // verify that the expected buffer size was also used
@@ -35,7 +34,7 @@ describe('CodestreamBox Tests', function () {
             const schema = CodestreamBox.schema;
 
             // read the box from the buffer
-            const reader = new bin.BufferReader(buffer, { endianness: 'big' });
+            const reader = new bin.BufferReader(BinaryHelper.toArrayBuffer(buffer), { endianness: 'big' });
             const box = schema.read(reader);
 
             // verify that the expected buffer size was also used
@@ -61,8 +60,8 @@ describe('CodestreamBox Tests', function () {
 
             // write the box to a buffer
             const length = schema.measure(box).size;
-            const buffer = Buffer.alloc(length);
-            const writer = new bin.BufferWriter(buffer, { endianness: 'big' });
+            const buffer = new Uint8Array(length);
+            const writer = new bin.BufferWriter(buffer.buffer, { endianness: 'big' });
             schema.write(writer, box);
 
             // verify that the expected buffer size was also used
@@ -79,7 +78,7 @@ describe('CodestreamBox Tests', function () {
             const schema = CodestreamBox.schema;
 
             // read the box from the buffer
-            const reader = new bin.BufferReader(buffer, { endianness: 'big' });
+            const reader = new bin.BufferReader(BinaryHelper.toArrayBuffer(buffer), { endianness: 'big' });
             const box = schema.read(reader);
 
             // verify that the expected buffer size was also used

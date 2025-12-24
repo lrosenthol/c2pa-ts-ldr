@@ -1,11 +1,10 @@
 import assert from 'node:assert/strict';
+import { describe, it } from 'bun:test';
 import * as bin from 'typed-binary';
 import { DescriptionBox, JSONBox, SuperBox } from '../../src/jumbf';
 import { BinaryHelper } from '../../src/util';
 
 describe('SuperBox Tests', function () {
-    this.timeout(0);
-
     describe('Empty', function () {
         const uuidString = '6332637300110010800000aa00389b71';
         const descriptionLabel = 'test.superbox';
@@ -24,8 +23,8 @@ describe('SuperBox Tests', function () {
 
             // write the box to a buffer
             const length = schema.measure(box).size;
-            const buffer = Buffer.alloc(length);
-            const writer = new bin.BufferWriter(buffer, { endianness: 'big' });
+            const buffer = new Uint8Array(length);
+            const writer = new bin.BufferWriter(buffer.buffer, { endianness: 'big' });
             schema.write(writer, box);
 
             // verify that the expected buffer size was also used
@@ -48,7 +47,7 @@ describe('SuperBox Tests', function () {
             const schema = SuperBox.schema;
 
             // read the box from the buffer
-            const reader = new bin.BufferReader(buffer, { endianness: 'big' });
+            const reader = new bin.BufferReader(BinaryHelper.toArrayBuffer(buffer), { endianness: 'big' });
             const box = schema.read(reader);
 
             // verify that the expected buffer size was also used
@@ -111,8 +110,8 @@ describe('SuperBox Tests', function () {
 
             // write the box to a buffer
             const length = schema.measure(box).size;
-            const buffer = Buffer.alloc(length);
-            const writer = new bin.BufferWriter(buffer, { endianness: 'big' });
+            const buffer = new Uint8Array(length);
+            const writer = new bin.BufferWriter(buffer.buffer, { endianness: 'big' });
             schema.write(writer, box);
 
             // verify that the expected buffer size was also used
@@ -135,7 +134,7 @@ describe('SuperBox Tests', function () {
             const schema = SuperBox.schema;
 
             // read the box from the buffer
-            const reader = new bin.BufferReader(buffer, { endianness: 'big' });
+            const reader = new bin.BufferReader(BinaryHelper.toArrayBuffer(buffer), { endianness: 'big' });
             const box = schema.read(reader);
 
             // verify that the expected buffer size was also used

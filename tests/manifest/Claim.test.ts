@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { describe, it } from 'bun:test';
 import * as bin from 'typed-binary';
 import { HashAlgorithm } from '../../src/crypto';
 import { CBORBox, SuperBox } from '../../src/jumbf';
@@ -8,8 +9,6 @@ import * as raw from '../../src/manifest/rawTypes';
 import { BinaryHelper } from '../../src/util';
 
 describe('Claim Tests', function () {
-    this.timeout(0);
-
     describe('Algorithms', () => {
         it('mapping names', () => {
             for (const algo of ['SHA-256', 'SHA-384', 'SHA-512']) {
@@ -84,7 +83,7 @@ describe('Claim Tests', function () {
             const schema = SuperBox.schema;
 
             // read the box from the buffer
-            const reader = new bin.BufferReader(buffer, { endianness: 'big' });
+            const reader = new bin.BufferReader(BinaryHelper.toArrayBuffer(buffer), { endianness: 'big' });
             const box = schema.read(reader);
             assert.equal(reader.currentByteOffset, buffer.length, 'consumed number of bytes differs');
 
@@ -138,7 +137,7 @@ describe('Claim Tests', function () {
 
         let claim: Claim;
         it('construct a claim from the JUMBF box', function () {
-            if (!superBox) this.skip();
+            if (!superBox) return;
 
             const c = Claim.read(superBox);
 
@@ -192,7 +191,7 @@ describe('Claim Tests', function () {
         });
 
         it('construct a JUMBF box from the claim', function () {
-            if (!claim) this.skip();
+            if (!claim) return;
 
             const box = claim.generateJUMBFBox();
 

@@ -1,11 +1,10 @@
 import assert from 'assert';
+import { describe, it } from 'bun:test';
 import * as bin from 'typed-binary';
 import { C2PASaltBox } from '../../src/jumbf/C2PASaltBox';
 import { BinaryHelper } from '../../src/util';
 
 describe('C2PASaltBox Tests', function () {
-    this.timeout(0);
-
     describe('16 bit salt', function () {
         const saltString = '6332637300110010800000aa00389b71';
         const serializedString = '00000018633273686332637300110010800000aa00389b71';
@@ -19,8 +18,8 @@ describe('C2PASaltBox Tests', function () {
 
             // write the box to a buffer
             const length = schema.measure(box).size;
-            const buffer = Buffer.alloc(length);
-            const writer = new bin.BufferWriter(buffer, { endianness: 'big' });
+            const buffer = new Uint8Array(length);
+            const writer = new bin.BufferWriter(buffer.buffer, { endianness: 'big' });
             schema.write(writer, box);
 
             // verify that the expected buffer size was also used
@@ -37,7 +36,7 @@ describe('C2PASaltBox Tests', function () {
             const schema = C2PASaltBox.schema;
 
             // read the box from the buffer
-            const reader = new bin.BufferReader(buffer, { endianness: 'big' });
+            const reader = new bin.BufferReader(BinaryHelper.toArrayBuffer(buffer), { endianness: 'big' });
             const box = schema.read(reader);
 
             // verify that the expected buffer size was also used
@@ -63,8 +62,8 @@ describe('C2PASaltBox Tests', function () {
 
             // write the box to a buffer
             const length = schema.measure(box).size;
-            const buffer = Buffer.alloc(length);
-            const writer = new bin.BufferWriter(buffer, { endianness: 'big' });
+            const buffer = new Uint8Array(length);
+            const writer = new bin.BufferWriter(buffer.buffer, { endianness: 'big' });
             schema.write(writer, box);
 
             // verify that the expected buffer size was also used
@@ -81,7 +80,7 @@ describe('C2PASaltBox Tests', function () {
             const schema = C2PASaltBox.schema;
 
             // read the box from the buffer
-            const reader = new bin.BufferReader(buffer, { endianness: 'big' });
+            const reader = new bin.BufferReader(BinaryHelper.toArrayBuffer(buffer), { endianness: 'big' });
             const box = schema.read(reader);
 
             // verify that the expected buffer size was also used

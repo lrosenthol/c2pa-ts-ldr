@@ -1,12 +1,11 @@
 import assert from 'node:assert/strict';
+import { describe, it } from 'bun:test';
 import * as bin from 'typed-binary';
 import { GenericBoxSchema } from '../../src/jumbf/GenericBoxSchema';
 import { UUIDBox } from '../../src/jumbf/UUIDBox';
 import { BinaryHelper } from '../../src/util';
 
 describe('GenericBoxSchema Tests', function () {
-    this.timeout(0);
-
     const schema = new GenericBoxSchema();
 
     it('read an unrecognized box', async function () {
@@ -14,7 +13,7 @@ describe('GenericBoxSchema Tests', function () {
         const buffer = BinaryHelper.fromHexString(serializedString);
 
         // read the box from the buffer
-        const reader = new bin.BufferReader(buffer, { endianness: 'big' });
+        const reader = new bin.BufferReader(BinaryHelper.toArrayBuffer(buffer), { endianness: 'big' });
         const box = schema.read(reader);
 
         // verify that the expected buffer size was also used
@@ -29,7 +28,7 @@ describe('GenericBoxSchema Tests', function () {
         const buffer = BinaryHelper.fromHexString(serializedString);
 
         // read the box from the buffer
-        const reader = new bin.BufferReader(buffer, { endianness: 'big' });
+        const reader = new bin.BufferReader(BinaryHelper.toArrayBuffer(buffer), { endianness: 'big' });
         const box = schema.read(reader);
 
         // verify that the expected buffer size was also used
