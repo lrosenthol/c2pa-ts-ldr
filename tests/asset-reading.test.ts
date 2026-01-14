@@ -171,6 +171,11 @@ const testFiles: Record<string, TestExpectations> = {
         jumbf: true,
         valid: true,
     },
+    'public-testfiles/legacy/1.4/video/mp4/truepic-20230212-zoetrope.mp4': {
+        assetType: BMFF,
+        jumbf: true,
+        valid: true,
+    },
     'amazon-titan-g1.png': {
         assetType: PNG,
         jumbf: true,
@@ -193,6 +198,11 @@ const testFiles: Record<string, TestExpectations> = {
         jumbf: true,
         valid: true,
     },
+    'trustnxt-icon-signed-timestamp.jpg': {
+        assetType: JPEG,
+        jumbf: true,
+        valid: true,
+    },
 };
 
 describe('Functional Asset Reading Tests', function () {
@@ -209,11 +219,11 @@ describe('Functional Asset Reading Tests', function () {
             it(`constructing the asset`, async function () {
                 if (!buf) return;
 
-                // ensure it's a JPEG
-                assert.ok(data.assetType.canRead(buf));
+                // ensure it's a valid asset
+                assert.ok(await data.assetType.canRead(buf));
 
                 // construct the asset
-                asset = new data.assetType(buf);
+                asset = await data.assetType.create(buf);
             });
 
             let jumbf: Uint8Array | undefined = undefined;
@@ -221,7 +231,7 @@ describe('Functional Asset Reading Tests', function () {
                 if (!asset) return;
 
                 // extract the C2PA manifest store in binary JUMBF format
-                jumbf = asset.getManifestJUMBF();
+                jumbf = await asset.getManifestJUMBF();
                 if (data.jumbf) {
                     assert.ok(jumbf, 'no JUMBF found');
                 } else {

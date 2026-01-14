@@ -1,5 +1,122 @@
 # c2pa-ts
 
+## 0.13.1
+
+### Patch Changes
+
+- c3d5993: Use proper DER encoding for CMS SignedAttributes
+
+## 0.13.0
+
+### Minor Changes
+
+- 1e7491c: Runtime Agnostic Streaming - Breaking API Change
+
+    ### Changed APIs
+    - `writeToFile(path: string)` → `writeToStream(stream: WritableStream<Uint8Array>)`
+
+    This change affects:
+    - `AssetDataReader.writeToFile` → `AssetDataReader.writeToStream`
+    - `Asset.writeToFile` → `Asset.writeToStream`
+    - `BaseAsset.writeToFile` → `BaseAsset.writeToStream`
+    - `BlobDataReader.writeToFile` → `BlobDataReader.writeToStream`
+    - `BufferDataReader.writeToFile` → `BufferDataReader.writeToStream`
+
+    ### Migration Guide
+
+    The caller is now responsible for creating the `WritableStream` using their runtime:
+
+    **Node.js:**
+
+    ```typescript
+    import { createWriteStream } from 'node:fs';
+    import { Writable } from 'node:stream';
+
+    const nodeStream = createWriteStream(outputPath);
+    const writableStream = Writable.toWeb(nodeStream);
+    await asset.writeToStream(writableStream);
+    ```
+
+    ### Removed Node.js Imports
+    - Removed `import { createWriteStream, WriteStream } from 'node:fs'` from `BlobDataReader.ts`
+    - Removed `import { writeFile } from 'node:fs/promises'` from `BufferDataReader.ts`
+
+    This enables the library to be bundled for client-side applications (e.g., Next.js with Turbopack) without Node.js polyfills.
+
+## 0.12.1
+
+### Patch Changes
+
+- 0831623: ### Browser Compatibility Fix
+
+    Fixed a bundler error that occurred when using c2pa-ts in browser environments (e.g., Next.js with Turbopack).
+
+    **Problem:**
+    Top-level imports of Node.js `fs` and `fs/promises` modules in `BlobDataReader` and `BufferDataReader` caused build failures in browser bundlers, even though the `writeToFile()` method is only intended for Node.js usage.
+
+    **Solution:**
+    Converted static top-level imports to dynamic imports inside `writeToFile()` methods. This ensures the `fs` modules are only loaded when `writeToFile()` is actually called at runtime, allowing the library to be bundled for browser environments without errors.
+
+    **Note:** The `writeToFile()` method remains Node.js-only and will fail if called in a browser environment.
+
+## 0.12.0
+
+### Minor Changes
+
+- 1deb78f: Add MP4 video file support
+    - Added support for MP4 video files (mp41, mp42, isom brands)
+    - Implemented StcoBox and Co64Box classes for proper chunk offset patching when inserting C2PA manifests in MP4 files
+    - Fixed QuickTime-style MetaBox parsing to handle both ISO BMFF and QuickTime formats
+    - Fixed JUMBF extraction to exclude trailing padding bytes
+    - Made metadata assertion JSON-LD parser more lenient with undefined prefixes
+    - Added MP4 video signing and validation tests
+    - MP4 files can now be signed and validated using BMFF v2 and v3 hash assertions
+
+### Patch Changes
+
+- 6f65a61: Increase interoperability when using LocalTimestampProvider
+
+## 0.11.0
+
+### Minor Changes
+
+- b3c0102: # Large Asset Support - Asset Abstraction
+
+    > ⚠️ **Breaking API Changes** — Several methods are now async. Add `await` where needed.
+
+    ## What's New
+    - **Blob support**: Assets accept `Uint8Array` or `Blob` — enables streaming large files (multi-GB) without loading into memory
+    - **`writeToFile(path)`**: Streams output directly to disk (preferred for large files)
+    - **`getBlob()`**: Returns underlying Blob if available
+
+    ## Breaking Changes
+
+    ### Asset Creation & Interface
+
+    The `AssetType` interface has been updated to support async creation and `Blob` sources. Use `create()` instead of `new`.
+
+    ```typescript
+    // Before
+    const asset = new JPEG(data);
+    const canRead = JPEG.canRead(data);
+
+    // After
+    const asset = await JPEG.create(data);
+    const canRead = await JPEG.canRead(data);
+    ```
+
+    ### Async Methods
+
+    These methods are now async:
+
+    | Method                  | Now returns                        |
+    | ----------------------- | ---------------------------------- |
+    | `canRead()`             | `Promise<boolean>`                 |
+    | `create()`              | `Promise<Asset>`                   |
+    | `getManifestJUMBF()`    | `Promise<Uint8Array \| undefined>` |
+    | `ensureManifestSpace()` | `Promise<void>`                    |
+    | `writeManifestJUMBF()`  | `Promise<void>`                    |
+
 ## 0.10.0
 
 ### Minor Changes
