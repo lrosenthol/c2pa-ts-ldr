@@ -72,6 +72,8 @@
   },
   "dependencies": {
     "@noble/hashes": "^2.0.1",
+    "@peculiar/asn1-pfx": "^2.6.0",
+    "@peculiar/asn1-pkcs9": "^2.6.0",
     "@peculiar/x509": "^1.12.2",
     "cbor-x": "^1.6.0",
     "crc-32": "^1.2.2",
@@ -85,6 +87,7 @@
     "format": "prettier --write src tests",
     "test": "bun test",
     "build": "tsup",
+    "dev": "tsup --watch",
     "changeset": "changeset",
     "version": "changeset version && bun install",
     "release": "bun run build && bunx npm@latest exec changeset -- publish"
